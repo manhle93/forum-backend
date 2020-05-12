@@ -17,6 +17,7 @@ class CreateChuDesTable extends Migration
             $table->id();
             $table->text('ten');
             $table->string('slug');
+            $table->integer('user_id')->unsigned();
             $table->timestamps();
         });
     }

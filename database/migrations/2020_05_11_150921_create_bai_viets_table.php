@@ -19,7 +19,7 @@ class CreateBaiVietsTable extends Migration
             $table->string('tieu_de');
             $table->text('noi_dung');
             $table->string('slug');
-            $table->integer('danh_muc_id')->unsigned();
+            $table->integer('chu_de_id')->unsigned();
             $table->integer('user_id')->unsigned();
         });
     }
