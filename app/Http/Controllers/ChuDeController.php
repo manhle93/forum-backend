@@ -14,7 +14,7 @@ class ChuDeController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**
@@ -44,9 +44,9 @@ class ChuDeController extends Controller
      * @param  \App\ChuDe  $chuDe
      * @return \Illuminate\Http\Response
      */
-    public function show(ChuDe $chuDe)
+    public function show($id)
     {
-        //
+        return ChuDe::find($id);
     }
 
     /**

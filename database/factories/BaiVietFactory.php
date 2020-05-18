@@ -14,7 +14,7 @@ $factory->define(BaiViet::class, function (Faker $faker) {
     return [
         'tieu_de' => $tieu_de,
         'slug' => Str::slug($tieu_de),
-        'noi_dung' => $faker->sentence(),
+        'noi_dung' => $faker->text(),
         'chu_de_id' => function () {
             return ChuDe::all()->random();
         },

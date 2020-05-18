@@ -14,7 +14,7 @@ class BaiVietController extends Controller
      */
     public function index()
     {
-        //
+        return BaiViet::latest()->get();
     }
 
     /**
@@ -44,9 +44,10 @@ class BaiVietController extends Controller
      * @param  \App\BaiViet  $baiViet
      * @return \Illuminate\Http\Response
      */
-    public function show(BaiViet $baiViet)
+    public function show($id)
     {
-        //
+       $baiViet =  BaiViet::with('user', 'binhLuans')->find($id);
+       return $baiViet;
     }
 
     /**
@@ -57,7 +58,7 @@ class BaiVietController extends Controller
      */
     public function edit(BaiViet $baiViet)
     {
-        //
+        
     }
 
     /**
@@ -78,8 +79,9 @@ class BaiVietController extends Controller
      * @param  \App\BaiViet  $baiViet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(BaiViet $baiViet)
+    public function destroy($id)
     {
-        //
+        BaiViet::find($id)->delete();
+        return response(['message' => "Xóa bài viết thành công"], 200);
     }
 }
