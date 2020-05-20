@@ -17,6 +17,11 @@ class BaiVietController extends Controller
         return BaiViet::latest()->get();
     }
 
+    public function baiVietTrangChu(){
+        $hoiDap = BaiViet::with('user')->where('loai', 'hoi_dap')->orderBy('created_at', "DESC")->take(3)->get();
+        $baiViet = BaiViet::with('user')->where('loai', 'bai_viet')->orderBy('created_at', "DESC")->take(7)->get();
+        return response(['hoiDap' => $hoiDap, 'baiViet' => $baiViet],200);
+    }
     /**
      * Show the form for creating a new resource.
      *

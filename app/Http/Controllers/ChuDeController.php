@@ -12,9 +12,13 @@ class ChuDeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        
+        $page = $request->get('page');
+        $perPage = $request->get('perPage', 6);
+        $query = ChuDe::query();
+        $chuDe = $query->paginate($perPage, ['*'], 'page', $page);
+        return response(['data' => $chuDe], 200);
     }
 
     /**

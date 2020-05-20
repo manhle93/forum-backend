@@ -15,3 +15,5 @@ Route::group([
 
 Route::apiResource('/baiviet', 'BaiVietController');
 Route::apiResource('/chude', 'ChuDeController');
+
+Route::get('/baiviettrangchu', 'BaiVietController@baiVietTrangChu');
