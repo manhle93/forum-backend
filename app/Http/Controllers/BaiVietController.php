@@ -51,7 +51,7 @@ class BaiVietController extends Controller
      */
     public function show($id)
     {
-       $baiViet =  BaiViet::with('user', 'binhLuans')->find($id);
+       $baiViet =  BaiViet::with('user', 'binhLuans', 'chuDe')->find($id);
        return $baiViet;
     }
 
