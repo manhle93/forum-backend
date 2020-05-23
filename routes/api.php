@@ -17,3 +17,4 @@ Route::apiResource('/baiviet', 'BaiVietController');
 Route::apiResource('/chude', 'ChuDeController');
 
 Route::get('/baiviettrangchu', 'BaiVietController@baiVietTrangChu');
+Route::get('/test', 'BaiVietController@test');

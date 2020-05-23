@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use App\BaiViet;
 use Illuminate\Http\Request;
+use Validator;
 
 class BaiVietController extends Controller
 {
+
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api', ['except' => ['show', 'baiVietTrangChu']]);
+    // }
+
     /**
      * Display a listing of the resource.
      *
@@ -29,9 +36,11 @@ class BaiVietController extends Controller
      */
     public function create()
     {
-        //
+        
     }
-
+    public function test(){
+        dd(auth()->user());
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -40,7 +49,37 @@ class BaiVietController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd(444);
+        $data = $request->all();
+        $user = auth()->user();
+        $validator = Validator::make($data, [
+            'tieu_de' => 'required',
+            'noi_dung'  => 'required',
+            'chu_de_id' => 'required'
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 400,
+                'message' => __('Thiếu thông tin'),
+                'data' => [
+                    $validator->errors()->all(),
+                ],
+            ], 400);
+        }
+        try{
+            BaiViet::created([
+                'tieu_de' => $data['tieu_de'],
+                'noi_dung' => $data['noi_dung'],
+                'chu_de_id' => $data['chu_de_id'],
+                'user_id' => $user->id,
+                'loai' => $data['loai']
+            ]);
+            return response(['message'=> 'Thành công'],200);
+        }
+        catch(\Exception $e){
+            return response(['data'=> $e ],200);
+        }
     }
 
     /**
