@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 class BaiViet extends Model
 {
+    protected $fillable = ['tieu_de','noi_dung','loai','user_id','chu_de_id'];
     public function user(){
         return $this->belongsTo(User::class,);
     }

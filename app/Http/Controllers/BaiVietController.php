@@ -9,10 +9,10 @@ use Validator;
 class BaiVietController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api', ['except' => ['show', 'baiVietTrangChu']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware('JWT', ['except' => ['show', 'baiVietTrangChu']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -24,10 +24,11 @@ class BaiVietController extends Controller
         return BaiViet::latest()->get();
     }
 
-    public function baiVietTrangChu(){
+    public function baiVietTrangChu()
+    {
         $hoiDap = BaiViet::with('user')->where('loai', 'hoi_dap')->orderBy('created_at', "DESC")->take(3)->get();
         $baiViet = BaiViet::with('user')->where('loai', 'bai_viet')->orderBy('created_at', "DESC")->take(7)->get();
-        return response(['hoiDap' => $hoiDap, 'baiViet' => $baiViet],200);
+        return response(['hoiDap' => $hoiDap, 'baiViet' => $baiViet], 200);
     }
     /**
      * Show the form for creating a new resource.
@@ -36,10 +37,6 @@ class BaiVietController extends Controller
      */
     public function create()
     {
-        
-    }
-    public function test(){
-        dd(auth()->user());
     }
     /**
      * Store a newly created resource in storage.
@@ -49,13 +46,13 @@ class BaiVietController extends Controller
      */
     public function store(Request $request)
     {
-        dd(444);
         $data = $request->all();
         $user = auth()->user();
         $validator = Validator::make($data, [
             'tieu_de' => 'required',
             'noi_dung'  => 'required',
-            'chu_de_id' => 'required'
+            'chu_de_id' => 'required',
+            'loai' => 'required'
 
         ]);
         if ($validator->fails()) {
@@ -67,18 +64,17 @@ class BaiVietController extends Controller
                 ],
             ], 400);
         }
-        try{
-            BaiViet::created([
+        try {
+            BaiViet::create([
                 'tieu_de' => $data['tieu_de'],
                 'noi_dung' => $data['noi_dung'],
                 'chu_de_id' => $data['chu_de_id'],
                 'user_id' => $user->id,
                 'loai' => $data['loai']
             ]);
-            return response(['message'=> 'Thành công'],200);
-        }
-        catch(\Exception $e){
-            return response(['data'=> $e ],200);
+            return response(['message' => 'Đăng bài thành công'], 200);
+        } catch (\Exception $e) {
+            return response($e, 500);
         }
     }
 
@@ -90,8 +86,8 @@ class BaiVietController extends Controller
      */
     public function show($id)
     {
-       $baiViet =  BaiViet::with('user', 'binhLuans', 'chuDe')->find($id);
-       return $baiViet;
+        $baiViet =  BaiViet::with('user', 'binhLuans', 'chuDe')->find($id);
+        return $baiViet;
     }
 
     /**
@@ -102,7 +98,6 @@ class BaiVietController extends Controller
      */
     public function edit(BaiViet $baiViet)
     {
-        
     }
 
     /**
