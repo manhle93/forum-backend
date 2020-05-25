@@ -11,7 +11,6 @@ $factory->define(ChuDe::class, function (Faker $faker) {
     $ten = $faker->word;
     return [
         'ten' => $ten,
-        'slug' => Str::slug($ten),
         'user_id' => function(){
             return User::all()->random();
         }

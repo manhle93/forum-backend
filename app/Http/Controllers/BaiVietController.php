@@ -70,6 +70,7 @@ class BaiVietController extends Controller
                 'noi_dung' => $data['noi_dung'],
                 'chu_de_id' => $data['chu_de_id'],
                 'user_id' => $user->id,
+                'anh_dai_dien' => $data['anh_dai_dien'],
                 'loai' => $data['loai']
             ]);
             return response(['message' => 'Đăng bài thành công'], 200);
@@ -96,7 +97,7 @@ class BaiVietController extends Controller
      * @param  \App\BaiViet  $baiViet
      * @return \Illuminate\Http\Response
      */
-    public function edit(BaiViet $baiViet)
+    public function edit()
     {
     }
 
@@ -107,9 +108,39 @@ class BaiVietController extends Controller
      * @param  \App\BaiViet  $baiViet
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, BaiViet $baiViet)
+    public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $user = auth()->user();
+        $validator = Validator::make($data, [
+            'tieu_de' => 'required',
+            'noi_dung'  => 'required',
+            'chu_de_id' => 'required',
+            'loai' => 'required'
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 400,
+                'message' => __('Thiếu thông tin'),
+                'data' => [
+                    $validator->errors()->all(),
+                ],
+            ], 400);
+        }
+        try {
+            BaiViet::where('id', $id)->first()->update([
+                'tieu_de' => $data['tieu_de'],
+                'noi_dung' => $data['noi_dung'],
+                'chu_de_id' => $data['chu_de_id'],
+                'anh_dai_dien' => $data['anh_dai_dien'],
+                'user_id' => $user->id,
+                'loai' => $data['loai']
+            ]);
+            return response(['message' => 'Cập nhật thành công'], 200);
+        } catch (\Exception $e) {
+            return response($e, 500);
+        }
     }
 
     /**
@@ -120,7 +151,22 @@ class BaiVietController extends Controller
      */
     public function destroy($id)
     {
-        BaiViet::find($id)->delete();
-        return response(['message' => "Xóa bài viết thành công"], 200);
+        $user = auth()->user();
+        if ($user && $user->id == BaiViet::find($id)->user_id) {
+            BaiViet::find($id)->delete();
+            return response(['message' => "Xóa bài viết thành công"], 200);
+        } else return response(['message' => "Không thể xóa bài viết"], 400);
+    }
+
+    public function uploadAnh(Request $request)
+    {
+        if ($request->file) {
+            $image = $request->file;
+            $name = time() . '.' . $image->getClientOriginalExtension();
+            $image->move('storage/images/avatar/', $name);
+            // $user = User::find(auth()->user()->id);
+            // $user->update(['avatar_url' => 'storage/images/avatar/' . $name]);
+            return 'storage/images/avatar/' . $name;
+        }
     }
 }

@@ -39,7 +39,32 @@ class ChuDeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $user = auth()->user();
+        $validator = Validator::make($data, [
+            'ten' => 'required',
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 400,
+                'message' => __('Thiếu thông tin'),
+                'data' => [
+                    $validator->errors()->all(),
+                ],
+            ], 400);
+        }
+        try {
+            ChuDe::create([
+                'ten' => $data['ten'],
+                'mo_ta' => $data['mo_ta'],
+                'anh_dai_dien' => $data['anh_dai_dien'],
+                'user_id' => $user->id,
+            ]);
+            return response(['message' => 'Thêm chủ đề thành công'], 200);
+        } catch (\Exception $e) {
+            return response($e, 500);
+        }
     }
 
     /**
