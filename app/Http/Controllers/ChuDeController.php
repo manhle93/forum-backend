@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\ChuDe;
 use Illuminate\Http\Request;
+use Validator;
 
 class ChuDeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('JWT', ['except' => ['index', 'show']]);
+    }
     /**
      * Display a listing of the resource.
      *
