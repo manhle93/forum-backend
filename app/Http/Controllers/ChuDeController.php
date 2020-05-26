@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BaiViet;
 use App\ChuDe;
 use Illuminate\Http\Request;
 use Validator;
@@ -10,7 +11,7 @@ class ChuDeController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('JWT', ['except' => ['index', 'show']]);
+        $this->middleware('JWT', ['except' => ['index']]);
     }
     /**
      * Display a listing of the resource.
@@ -22,7 +23,7 @@ class ChuDeController extends Controller
         $page = $request->get('page');
         $perPage = $request->get('perPage', 6);
         $query = ChuDe::query();
-        $chuDe = $query->paginate($perPage, ['*'], 'page', $page);
+        $chuDe = $query->orderBy('updated_at', 'DESC')->paginate($perPage, ['*'], 'page', $page);
         return response(['data' => $chuDe], 200);
     }
 
@@ -101,9 +102,34 @@ class ChuDeController extends Controller
      * @param  \App\ChuDe  $chuDe
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ChuDe $chuDe)
+    public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $user = auth()->user();
+        $validator = Validator::make($data, [
+            'ten' => 'required',
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 400,
+                'message' => __('Thiếu thông tin'),
+                'data' => [
+                    $validator->errors()->all(),
+                ],
+            ], 400);
+        }
+        try {
+            ChuDe::where('id', $id)->first()->update([
+                'ten' => $data['ten'],
+                'mo_ta' => $data['mo_ta'],
+                'anh_dai_dien' => $data['anh_dai_dien'],
+                'user_id' => $user->id,
+            ]);
+            return response(['message' => 'Cập nhật chủ đề thành công'], 200);
+        } catch (\Exception $e) {
+            return response($e, 500);
+        }
     }
 
     /**
@@ -112,8 +138,14 @@ class ChuDeController extends Controller
      * @param  \App\ChuDe  $chuDe
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ChuDe $chuDe)
+    public function destroy($id)
     {
-        //
+        try{
+            BaiViet::where('chu_de_id', $id)->delete();
+            ChuDe::find($id)->delete();
+            return response(['message' => 'Thành công'],200);
+        }catch(\Exception $e){
+            return response(['message' => 'Không thể xóa', 'data' => $e],500);
+        }
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\BaiViet;
 use Illuminate\Http\Request;
+use App\Http\Resources\BaiVietResource;
+
 use Validator;
 
 class BaiVietController extends Controller
@@ -87,7 +89,7 @@ class BaiVietController extends Controller
      */
     public function show($id)
     {
-        $baiViet =  BaiViet::with('user', 'binhLuans', 'chuDe')->find($id);
+        $baiViet =  BaiViet::with('user', 'binhLuans', 'chuDe', 'binhLuans.user')->find($id);
         return $baiViet;
     }
 
