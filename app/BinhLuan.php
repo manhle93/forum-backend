@@ -7,6 +7,7 @@ use Carbon\Carbon;
 
 class BinhLuan extends Model
 {
+    protected $guarded = [];
     public function baiViet()
     {
         return $this->belongsTo(BaiViet::class);

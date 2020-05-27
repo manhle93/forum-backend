@@ -19,4 +19,6 @@ Route::apiResource('/chude', 'ChuDeController');
 Route::get('/baiviettrangchu', 'BaiVietController@baiVietTrangChu');
 Route::post('/uploadanh', 'BaiVietController@uploadAnh');
 
-Route::get('/test', 'BaiVietController@test');
+Route::get('/binhluan/{id}', 'BinhLuanController@getBinhLuan');
+Route::post('/binhluan', 'BinhLuanController@store');
+Route::delete('/binhluan/{id}', 'BinhLuanController@destroy');
