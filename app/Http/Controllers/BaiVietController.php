@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\BaiViet;
 use Illuminate\Http\Request;
 use App\Http\Resources\BaiVietResource;
-
+use App\Like;
 use Validator;
 
 class BaiVietController extends Controller
@@ -89,7 +89,15 @@ class BaiVietController extends Controller
      */
     public function show($id)
     {
+        $user = auth()->user();
+        $liked = false;
+        if($user){
+            $liked = !! Like::where('reference_id', $id)->where('type', 'bai_viet')->where('user_id', $user->id)->count();
+        }
+        $likeCount = Like::where('reference_id', $id)->where('type', 'bai_viet')->count();
         $baiViet =  BaiViet::with('user', 'chuDe')->find($id);
+        $baiViet['liked'] = $liked;
+        $baiViet['like_count'] = $likeCount;
         return $baiViet;
     }
 

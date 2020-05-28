@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 
 class LikeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('JWT', ['except' => ['index']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -22,9 +26,38 @@ class LikeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function like(Request $request)
     {
-        //
+        $data = $request->all();
+        $user = auth()->user();
+        if (!$user) {
+            return;
+        }
+        try {
+            Like::create([
+                'user_id' => $user->id,
+                'type' => $data['type'],
+                'reference_id' => $data['reference_id']
+            ]);
+            return response(['message' => 'Thành công'], 200);
+        } catch (\Exception $e) {
+            return response(['message' => 'Lỗi', 'data' => $e], 500);
+        }
+    }
+
+    public function unLike(Request $request)
+    {
+        $data = $request->all();
+        $user = auth()->user();
+        if (!$user) {
+            return;
+        }
+        try {
+            Like::where('user_id', $user->id)->where('type', $data['type'])->where('reference_id', $data['reference_id'])->delete();
+            return response(['message' => 'Thành công'], 200);
+        } catch (\Exception $e) {
+            return response(['message' => 'Lỗi', 'data' => $e], 500);
+        }
     }
 
     /**

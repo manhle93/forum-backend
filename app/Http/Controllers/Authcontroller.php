@@ -14,11 +14,11 @@ class Authcontroller extends Controller
      *
      * @return void
      */
+
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'dangKy']]);
+        $this->middleware('JWT', ['except' => ['login', 'dangKy']]);
     }
-
     /**
      * Get a JWT via given credentials.
      *
@@ -80,7 +80,8 @@ class Authcontroller extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user_name' => auth()->user()->name
+            'user_name' => auth()->user()->name,
+            'anh_dai_dien' => auth()->user()->anh_dai_dien,
         ]);
     }
     public function dangKy(Request $request){

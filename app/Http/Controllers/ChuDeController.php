@@ -11,7 +11,7 @@ class ChuDeController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('JWT', ['except' => ['index']]);
+        $this->middleware('JWT', ['except' => ['index', 'show']]);
     }
     /**
      * Display a listing of the resource.
@@ -24,6 +24,10 @@ class ChuDeController extends Controller
         $perPage = $request->get('perPage', 6);
         $query = ChuDe::query();
         $chuDe = $query->orderBy('updated_at', 'DESC')->paginate($perPage, ['*'], 'page', $page);
+        foreach($chuDe as $it){
+            $soBaiViet = BaiViet::where('chu_de_id', $it->id)->count();
+            $it['so_bai_viet'] = $soBaiViet;
+        }
         return response(['data' => $chuDe], 200);
     }
 
@@ -81,8 +85,14 @@ class ChuDeController extends Controller
      */
     public function show($id)
     {
-        return ChuDe::find($id);
+        $chuDe = ChuDe::with('user')->find($id);
+        $soBaiViet = BaiViet::where('chu_de_id', $id)->where('loai', 'bai_viet')->count();
+        $soCauHoi = BaiViet::where('chu_de_id', $id)->where('loai', 'hoi_dap')->count();
+        $chuDe['so_bai_viet'] = $soBaiViet;
+        $chuDe['so_cau_hoi'] = $soCauHoi;
+        return $chuDe;
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -140,12 +150,12 @@ class ChuDeController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             BaiViet::where('chu_de_id', $id)->delete();
             ChuDe::find($id)->delete();
-            return response(['message' => 'Thành công'],200);
-        }catch(\Exception $e){
-            return response(['message' => 'Không thể xóa', 'data' => $e],500);
+            return response(['message' => 'Thành công'], 200);
+        } catch (\Exception $e) {
+            return response(['message' => 'Không thể xóa', 'data' => $e], 500);
         }
     }
 }

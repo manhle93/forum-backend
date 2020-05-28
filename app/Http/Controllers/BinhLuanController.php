@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\BinhLuan;
 use App\Http\Resources\BinhLuanCollection;
 use App\Http\Resources\BinhLuanResource;
+use App\Like;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -24,8 +25,21 @@ class BinhLuanController extends Controller
     {
         //
     }
-    public function getBinhLuan($id){
+    public function getBinhLuan($id)
+    {
+        $user = auth()->user();
+        $liked = false;
         $binhLuan = BinhLuan::where('bai_viet_id', $id)->with('user')->orderBy('created_at', 'DESC')->get();
+        foreach ($binhLuan as $bl) {
+            $likeCount = Like::where('reference_id', $bl->id)->where('type', 'binh_luan')->count();
+            $bl['like_count'] = $likeCount;
+            if ($user) {
+                $liked = !!Like::where('reference_id', $bl->id)->where('type', 'binh_luan')->where('user_id', $user->id)->count();
+                $bl['liked'] = $liked;
+            } else {
+                $bl['liked'] = false;
+            }
+        }
         return response($binhLuan, 200);
     }
     /**
@@ -50,7 +64,7 @@ class BinhLuanController extends Controller
         $user = auth()->user();
         $validator = Validator::make($data, [
             'noi_dung'  => 'required',
-            'bai_viet_id'=> 'required',
+            'bai_viet_id' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -117,13 +131,13 @@ class BinhLuanController extends Controller
     {
         $user = auth()->user();
         $binhLuan = BinhLuan::find($id);
-        if(!$binhLuan){
-            return response(['message' => 'Bình luận không tồn tại'],500);
+        if (!$binhLuan) {
+            return response(['message' => 'Bình luận không tồn tại'], 500);
         }
-        if($user->id !== $binhLuan->user_id){
-            return response(['message' => 'Không thể xóa bình luận này'],500);
+        if ($user->id !== $binhLuan->user_id) {
+            return response(['message' => 'Không thể xóa bình luận này'], 500);
         }
         $binhLuan->delete();
-        return response(['message' => 'Xóa thành công'],200);
+        return response(['message' => 'Xóa thành công'], 200);
     }
 }

@@ -22,3 +22,6 @@ Route::post('/uploadanh', 'BaiVietController@uploadAnh');
 Route::get('/binhluan/{id}', 'BinhLuanController@getBinhLuan');
 Route::post('/binhluan', 'BinhLuanController@store');
 Route::delete('/binhluan/{id}', 'BinhLuanController@destroy');
+
+Route::post('/like', 'LikeController@like');
+Route::post('/unlike', 'LikeController@unLike');
