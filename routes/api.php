@@ -15,8 +15,13 @@ Route::group([
 
 Route::apiResource('/baiviet', 'BaiVietController');
 Route::apiResource('/chude', 'ChuDeController');
+Route::get('/baivietchude/{id}', 'ChuDeController@getBaiVietChuDe');
+Route::get('/cauhoichude/{id}', 'ChuDeController@getCauHoiChuDe');
+
 
 Route::get('/baiviettrangchu', 'BaiVietController@baiVietTrangChu');
+Route::get('/cauhoitrangchu', 'BaiVietController@cauhoiTrangChu');
+
 Route::post('/uploadanh', 'BaiVietController@uploadAnh');
 
 Route::get('/binhluan/{id}', 'BinhLuanController@getBinhLuan');

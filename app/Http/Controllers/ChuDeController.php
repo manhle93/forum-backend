@@ -11,7 +11,7 @@ class ChuDeController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('JWT', ['except' => ['index', 'show']]);
+        $this->middleware('JWT', ['except' => ['index', 'show', 'getBaiVietChuDe', 'getCauHoiChuDe']]);
     }
     /**
      * Display a listing of the resource.
@@ -29,6 +29,20 @@ class ChuDeController extends Controller
             $it['so_bai_viet'] = $soBaiViet;
         }
         return response(['data' => $chuDe], 200);
+    }
+
+    public function getBaiVietChuDe(Request $request, $id){
+        $page = $request->get('page');
+        $perPage = $request->get('perPage', 6);
+        $baiViet = BaiViet::with('user')->where('chu_de_id', $id)->where('loai', 'bai_viet')->with('user')->orderBy('updated_at', 'DESC')->paginate($perPage, ['*'], 'page', $page);
+        return response(['data' => $baiViet], 200);
+    }
+
+    public function getCauHoiChuDe(Request $request, $id){
+        $page = $request->get('page');
+        $perPage = $request->get('perPage', 6);
+        $baiViet = BaiViet::where('chu_de_id', $id)->where('loai', 'hoi_dap')->with('user')->orderBy('updated_at', 'DESC')->paginate($perPage, ['*'], 'page', $page);
+        return response(['data' => $baiViet], 200);
     }
 
     /**

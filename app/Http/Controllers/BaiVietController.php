@@ -13,7 +13,7 @@ class BaiVietController extends Controller
 
     public function __construct()
     {
-        $this->middleware('JWT', ['except' => ['show', 'baiVietTrangChu']]);
+        $this->middleware('JWT', ['except' => ['show', 'baiVietTrangChu', 'cauhoiTrangChu']]);
     }
 
     /**
@@ -26,11 +26,21 @@ class BaiVietController extends Controller
         return BaiViet::latest()->get();
     }
 
-    public function baiVietTrangChu()
+    public function baiVietTrangChu(Request $request)
     {
-        $hoiDap = BaiViet::with('user')->where('loai', 'hoi_dap')->orderBy('created_at', "DESC")->take(3)->get();
-        $baiViet = BaiViet::with('user')->where('loai', 'bai_viet')->orderBy('created_at', "DESC")->take(7)->get();
-        return response(['hoiDap' => $hoiDap, 'baiViet' => $baiViet], 200);
+        $page = $request->get('page');
+        $perPage = $request->get('perPage', 7);
+        $baiViet = BaiViet::with('user')->where('loai', 'bai_viet')->orderBy('created_at', "DESC")->paginate($perPage, ['*'], 'page', $page);
+        return response([ 'data' => $baiViet], 200);
+    }
+
+    public function cauhoiTrangChu(Request $request)
+    {
+        $page = $request->get('page');
+        $perPage = $request->get('perPage', 3);
+
+        $hoiDap = BaiViet::with('user')->where('loai', 'hoi_dap')->orderBy('created_at', "DESC")->paginate($perPage, ['*'], 'page', $page);
+        return response(['data' => $hoiDap], 200);
     }
     /**
      * Show the form for creating a new resource.
