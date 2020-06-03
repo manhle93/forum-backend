@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LikeEvent;
 use App\Like;
 use Illuminate\Http\Request;
 
@@ -39,6 +40,7 @@ class LikeController extends Controller
                 'type' => $data['type'],
                 'reference_id' => $data['reference_id']
             ]);
+            broadcast(new LikeEvent($data['reference_id'], $data['type']))->toOthers();
             return response(['message' => 'Thành công'], 200);
         } catch (\Exception $e) {
             return response(['message' => 'Lỗi', 'data' => $e], 500);
@@ -54,6 +56,7 @@ class LikeController extends Controller
         }
         try {
             Like::where('user_id', $user->id)->where('type', $data['type'])->where('reference_id', $data['reference_id'])->delete();
+            broadcast(new LikeEvent($data['reference_id'], $data['type']))->toOthers();
             return response(['message' => 'Thành công'], 200);
         } catch (\Exception $e) {
             return response(['message' => 'Lỗi', 'data' => $e], 500);
