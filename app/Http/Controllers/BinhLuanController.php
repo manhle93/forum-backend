@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\BaiViet;
 use App\BinhLuan;
 use App\Http\Resources\BinhLuanCollection;
 use App\Http\Resources\BinhLuanResource;
 use App\Like;
+use App\Notifications\BinhLuanNotification;
+use App\User;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -75,12 +78,18 @@ class BinhLuanController extends Controller
                 ],
             ], 400);
         }
+        $baiViet = BaiViet::find($data['bai_viet_id']);
+        if(!$baiViet){
+            return response(['message' => 'Bài viết không tồn tại'],500);
+        }
+        $userBaiViet = User::find($baiViet->user_id);
         try {
-            BinhLuan::create([
+           $binhLuan =  BinhLuan::create([
                 'noi_dung' => $data['noi_dung'],
                 'bai_viet_id' => $data['bai_viet_id'],
                 'user_id' => $user->id,
             ]);
+            $userBaiViet->notify(new BinhLuanNotification($binhLuan));
             return response(['message' => 'Đăng bình luận thành công'], 200);
         } catch (\Exception $e) {
             return response($data, 500);

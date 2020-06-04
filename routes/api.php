@@ -1,4 +1,7 @@
 <?php
+
+// use Illuminate\Routing\Route;
+
 Route::group([
 
     'middleware' => 'api',
@@ -30,3 +33,10 @@ Route::delete('/binhluan/{id}', 'BinhLuanController@destroy');
 
 Route::post('/like', 'LikeController@like');
 Route::post('/unlike', 'LikeController@unLike');
+
+Route::get('thongbao', function () {
+    return [
+        'daDoc' => auth()->user()->readNotifications()->get(),
+        'chuaDoc' => auth()->user()->unreadNotifications()->get(),
+    ];
+});
