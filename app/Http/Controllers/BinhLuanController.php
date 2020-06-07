@@ -11,6 +11,8 @@ use App\Notifications\BinhLuanNotification;
 use App\User;
 use Illuminate\Http\Request;
 use Validator;
+use App\Events\LikeEvent;
+use App\Events\NotifyEvent;
 
 class BinhLuanController extends Controller
 {
@@ -90,6 +92,8 @@ class BinhLuanController extends Controller
                 'user_id' => $user->id,
             ]);
             $userBaiViet->notify(new BinhLuanNotification($binhLuan));
+            broadcast(new LikeEvent($binhLuan->id, 'binh_luan'))->toOthers();
+            broadcast(new NotifyEvent ($userBaiViet->id, 'thong_bao', $user->name));
             return response(['message' => 'Đăng bình luận thành công'], 200);
         } catch (\Exception $e) {
             return response($data, 500);
@@ -146,6 +150,7 @@ class BinhLuanController extends Controller
         if ($user->id !== $binhLuan->user_id) {
             return response(['message' => 'Không thể xóa bình luận này'], 500);
         }
+        broadcast(new LikeEvent($id, 'binh_luan'))->toOthers();
         $binhLuan->delete();
         return response(['message' => 'Xóa thành công'], 200);
     }

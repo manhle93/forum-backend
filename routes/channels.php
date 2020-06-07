@@ -1,5 +1,6 @@
 <?php
 
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -19,4 +20,8 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
 
 Broadcast::channel('likeChannel', function () {
    return true;
+});
+
+Broadcast::channel('Notification', function () {
+    return true;
 });

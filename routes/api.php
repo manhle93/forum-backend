@@ -34,9 +34,5 @@ Route::delete('/binhluan/{id}', 'BinhLuanController@destroy');
 Route::post('/like', 'LikeController@like');
 Route::post('/unlike', 'LikeController@unLike');
 
-Route::get('thongbao', function () {
-    return [
-        'daDoc' => auth()->user()->readNotifications()->get(),
-        'chuaDoc' => auth()->user()->unreadNotifications()->get(),
-    ];
-});
+Route::get('thongbao', 'ThongBaoController@getThongBao');
+Route::post('docthongbao', 'ThongBaoController@docThongBao');

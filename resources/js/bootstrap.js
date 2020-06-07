@@ -9,6 +9,8 @@ window._ = require('lodash');
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+const JwtToken = `Bearer ${localStorage.getItem('token')}`
+window.axios.defaults.headers.common['Authorization'] = JwtToken;
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -23,6 +25,13 @@ window.Pusher = require('pusher-js');
 window.Echo = new Echo({
     broadcaster: 'pusher',
     key: "0b1ff6ede72a26bc7c91",
+    wsHost: window.location.hostname,
+    wsPort: 8000,
     cluster: "ap1",
-    forceTLS: true
+    forceTLS: true,
+    auth: {
+        headers: {
+            Authorization: JwtToken
+        }
+    }
 });
