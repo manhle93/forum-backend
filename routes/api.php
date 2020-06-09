@@ -36,3 +36,7 @@ Route::post('/unlike', 'LikeController@unLike');
 
 Route::get('thongbao', 'ThongBaoController@getThongBao');
 Route::post('docthongbao', 'ThongBaoController@docThongBao');
+Route::get('userinfo', 'UserController@trangCaNhan');
+
+
+Route::post('uploadavatar', 'UserController@uploadAnh');

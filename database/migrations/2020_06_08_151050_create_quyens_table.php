@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateBaiVietChuDeUser extends Migration
+class CreateQuyensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,11 @@ class UpdateBaiVietChuDeUser extends Migration
      */
     public function up()
     {
-        Schema::table('chu_des', function (Blueprint $table) {
+        Schema::create('quyens', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->string('ten')->nullable();
             $table->text('mo_ta')->nullable();
-
-        });
-        Schema::table('users', function (Blueprint $table) {
-            $table->integer('quyen_id')->default(1);
-        });
-        Schema::table('bai_viets', function (Blueprint $table) {
-            $table->string('loai')->nullable();
         });
     }
 
@@ -32,6 +28,6 @@ class UpdateBaiVietChuDeUser extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('quyens');
     }
 }

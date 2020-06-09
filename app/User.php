@@ -17,7 +17,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'quyen_id', 'anh_dai_dien',
     ];
 
     /**
@@ -38,13 +38,19 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function baiViets(){
+    public function baiViets()
+    {
         return $this->hasMany(BaiViet::class);
     }
-    public function binhLuans(){
+    public function binhLuans()
+    {
         return $this->hasMany(BinhLuan::class);
     }
 
+    public function quyen()
+    {
+        return $this->belongsTo('App\Quyen', 'quyen_id');
+    }
     public function getJWTIdentifier()
     {
         return $this->getKey();
