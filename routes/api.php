@@ -40,3 +40,7 @@ Route::get('userinfo', 'UserController@trangCaNhan');
 
 
 Route::post('uploadavatar', 'UserController@uploadAnh');
+Route::get('baivietuser', 'UserController@getBaiViet');
+Route::get('alluser', 'UserController@getAllUser');
+Route::get('allquyen', 'UserController@getAllQuyen');
+
