@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\BaiViet;
 use App\Quyen;
+use App\TinNhan;
 use App\User;
 use Illuminate\Http\Request;
+use Validator;
+use App\Events\TinNhanEvent;
+
 
 class UserController extends Controller
 {
@@ -65,4 +69,44 @@ class UserController extends Controller
         ]);
         return response(['message' => 'Thanh cong'], 200);
     }
+
+    public function nhanTin(Request $request)
+    {
+        $data = $request->all();
+        $user = auth()->user();
+        $validator = Validator::make($data, [
+            'noi_dung'  => 'required',
+            'user_nhan_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'code' => 400,
+                'message' => __('Thiếu thông tin'),
+                'data' => [
+                    $validator->errors()->all(),
+                ],
+            ], 400);
+        }
+        try{
+            TinNhan::create([
+                'user_gui_id' => $user->id,
+                'user_nhan_id' => $data['user_nhan_id'],
+                'noi_dung' => $data['noi_dung']
+            ]);
+            broadcast(new TinNhanEvent ($data['user_nhan_id'], $user->id))->toOthers();
+        }catch(\Exception $e){
+            return response(['message' => 'Lỗi'], 500);
+        }
+    }
+    public function getTinNhan($id){
+        $user = auth()->user();
+        $tinNhan = TinNhan::whereIn('user_nhan_id', [$user->id, $id])->whereIn('user_gui_id', [$user->id, $id])->get();
+        return response($tinNhan, 200);
+    }
+
+    public function getUserInfor($id){
+        $user = User::find($id);
+        return response($user, 200);
+    }
+    
 }

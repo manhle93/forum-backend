@@ -45,4 +45,10 @@ Route::get('alluser', 'UserController@getAllUser');
 Route::get('allquyen', 'UserController@getAllQuyen');
 Route::post('doiquyen/{id}', 'UserController@doiQuyen');
 
+Route::get('gettinnhan/{id}', 'UserController@getTinNhan');
+Route::post('guitin', 'UserController@nhanTin');
+Route::get('userinfo/{id}', 'UserController@getUserInfor');
+
+
+
 

@@ -25,3 +25,7 @@ Broadcast::channel('likeChannel', function () {
 Broadcast::channel('Notification', function () {
     return true;
 });
+
+Broadcast::channel('tinnhan', function () {
+    return true;
+});
