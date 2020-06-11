@@ -52,13 +52,17 @@ class UserController extends Controller
         $quyen = Quyen::get();
         return response($quyen, 200);
     }
-    public function doiQuyen()
+    public function doiQuyen($id, Request $request)
     {
         $user = auth()->user();
-        if($user->quyen_id == 1){
+
+
+        if ($user->quyen_id == 1) {
             return response(['message' => "Bạn không phải admin"], 500);
         }
-        $quyen = Quyen::get();
-        return response($quyen, 200);
+        User::where('id', $id)->update([
+            'quyen_id' => $request->quyen_id
+        ]);
+        return response(['message' => 'Thanh cong'], 200);
     }
 }

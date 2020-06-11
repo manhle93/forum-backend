@@ -43,4 +43,6 @@ Route::post('uploadavatar', 'UserController@uploadAnh');
 Route::get('baivietuser', 'UserController@getBaiViet');
 Route::get('alluser', 'UserController@getAllUser');
 Route::get('allquyen', 'UserController@getAllQuyen');
+Route::post('doiquyen/{id}', 'UserController@doiQuyen');
+
 
