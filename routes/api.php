@@ -49,6 +49,14 @@ Route::get('gettinnhan/{id}', 'UserController@getTinNhan');
 Route::post('guitin', 'UserController@nhanTin');
 Route::get('userinfo/{id}', 'UserController@getUserInfor');
 
+Route::post('sanpham', 'SanPhamController@addSanPham');
+Route::get('sanpham', 'SanPhamController@getSanPhamCaNhan');
+Route::put('sanpham/{id}', 'SanPhamController@editSanPham');
+Route::delete('sanpham/{id}', 'SanPhamController@xoaSanPham');
+
+
+
+
 
 
 
