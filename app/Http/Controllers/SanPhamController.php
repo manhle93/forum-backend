@@ -10,7 +10,7 @@ class SanPhamController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('JWT', ['except' => ['index']]);
+        $this->middleware('JWT', ['except' => ['getSanPham', 'getChiTietSanPham']]);
     }
 
     public function addSanPham(Request $request)
@@ -95,5 +95,17 @@ class SanPhamController extends Controller
         }catch(\Exception $e){
             return response($e, 500);
         }
+    }
+
+    public function getChiTietSanPham($id){
+       $sanpham =  SanPham::where('id', $id)->with('user')->select('ten_san_pham', 'id', 'gia_ban', 'mo_ta', 'anh_dai_dien', 'user_id')->first();
+       return response($sanpham, 200);
+    }
+
+    public function getSanPham(Request $request){
+        $page = $request->get('page');
+        $perPage = $request->get('perPage', 12);
+        $baiViet = SanPham::with('user')->orderBy('created_at', "DESC")->paginate($perPage, ['*'], 'page', $page);
+        return response([ 'data' => $baiViet], 200);
     }
 }

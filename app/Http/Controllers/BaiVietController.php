@@ -172,7 +172,7 @@ class BaiVietController extends Controller
     public function destroy($id)
     {
         $user = auth()->user();
-        if ($user && $user->id == BaiViet::find($id)->user_id) {
+        if ($user && (($user->id == BaiViet::find($id)->user_id) || $user->quyen_id == 2)) {
             BaiViet::find($id)->delete();
             return response(['message' => "Xóa bài viết thành công"], 200);
         } else return response(['message' => "Không thể xóa bài viết"], 400);

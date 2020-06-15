@@ -147,7 +147,7 @@ class BinhLuanController extends Controller
         if (!$binhLuan) {
             return response(['message' => 'Bình luận không tồn tại'], 500);
         }
-        if ($user->id !== $binhLuan->user_id) {
+        if ($user->id !== $binhLuan->user_id && $user->quyen_id != 2) {
             return response(['message' => 'Không thể xóa bình luận này'], 500);
         }
         broadcast(new LikeEvent($id, 'binh_luan'))->toOthers();

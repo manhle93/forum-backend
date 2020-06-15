@@ -81,7 +81,7 @@ class Authcontroller extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user_name' => auth()->user()->name,
-            'anh_dai_dien' => auth()->user()->anh_dai_dien,
+            'quyen_id' => auth()->user()->quyen_id
         ]);
     }
     public function dangKy(Request $request){

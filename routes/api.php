@@ -53,6 +53,14 @@ Route::post('sanpham', 'SanPhamController@addSanPham');
 Route::get('sanpham', 'SanPhamController@getSanPhamCaNhan');
 Route::put('sanpham/{id}', 'SanPhamController@editSanPham');
 Route::delete('sanpham/{id}', 'SanPhamController@xoaSanPham');
+Route::get('sanpham/{id}', 'SanPhamController@getChiTietSanPham');
+Route::get('danhsachsanpham', 'SanPhamController@getSanPham');
+
+
+
+Route::get('binhluansanpham/{id}', 'BinhLuanSanPhamController@index');
+Route::post('binhluansanpham', 'BinhLuanSanPhamController@store');
+Route::delete('binhluansanpham/{id}', 'BinhLuanSanPhamController@xoaBinhLuan');
 
 
 
