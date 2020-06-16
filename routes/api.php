@@ -48,6 +48,9 @@ Route::post('doiquyen/{id}', 'UserController@doiQuyen');
 Route::get('gettinnhan/{id}', 'UserController@getTinNhan');
 Route::post('guitin', 'UserController@nhanTin');
 Route::get('userinfo/{id}', 'UserController@getUserInfor');
+Route::get('baivietcanhan/{id}', 'UserController@getBaiVietProfile');
+Route::get('sanphamcanhan/{id}', 'UserController@getSanPhamProfile');
+
 
 Route::post('sanpham', 'SanPhamController@addSanPham');
 Route::get('sanpham', 'SanPhamController@getSanPhamCaNhan');
@@ -62,7 +65,15 @@ Route::get('binhluansanpham/{id}', 'BinhLuanSanPhamController@index');
 Route::post('binhluansanpham', 'BinhLuanSanPhamController@store');
 Route::delete('binhluansanpham/{id}', 'BinhLuanSanPhamController@xoaBinhLuan');
 
+Route::post('dathang', 'DonHangController@datHang');
 
+Route::get('banhangcanhan', 'DonHangController@getDonBanHangCaNhan');
+Route::put('huydonhang/{id}', 'DonHangController@huyDonBan');
+Route::put('nhandonhang/{id}', 'DonHangController@nhanDonBan');
+Route::put('hoanthanhdonhang/{id}', 'DonHangController@hoanThanhDon');
+
+Route::get('donmuahang', 'DonHangController@getDonMuaHangCaNhan');
+Route::put('huydonmuahang/{id}', 'DonHangController@huyDonMuaHang');
 
 
 

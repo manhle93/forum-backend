@@ -9,13 +9,13 @@ use App\User;
 use Illuminate\Http\Request;
 use Validator;
 use App\Events\TinNhanEvent;
-
+use App\SanPham;
 
 class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('JWT', ['except' => ['getBinhLuan']]);
+        $this->middleware('JWT', ['except' => ['getBinhLuan', 'getUserInfor', 'getBaiVietProfile', 'getSanPhamProfile']]);
     }
 
     public function trangCaNhan()
@@ -48,7 +48,8 @@ class UserController extends Controller
 
     public function getAllUser()
     {
-        $user = User::with('quyen')->get();
+
+        $user = User::with('quyen')->where('id', '<>', auth()->user()->id)->get();
         return response($user, 200);
     }
     public function getAllQuyen()
@@ -87,27 +88,40 @@ class UserController extends Controller
                 ],
             ], 400);
         }
-        try{
+        try {
             TinNhan::create([
                 'user_gui_id' => $user->id,
                 'user_nhan_id' => $data['user_nhan_id'],
                 'noi_dung' => $data['noi_dung']
             ]);
-            broadcast(new TinNhanEvent ($data['user_nhan_id'], $user->id))->toOthers();
-        }catch(\Exception $e){
+            broadcast(new TinNhanEvent($data['user_nhan_id'], $user->id))->toOthers();
+        } catch (\Exception $e) {
             return response(['message' => 'Lỗi'], 500);
         }
     }
-    public function getTinNhan($id){
+    public function getTinNhan($id)
+    {
         $user = auth()->user();
         $tinNhan = TinNhan::whereIn('user_nhan_id', [$user->id, $id])->whereIn('user_gui_id', [$user->id, $id])->get();
         return response($tinNhan, 200);
     }
 
-    public function getUserInfor($id){
-        $user = User::find($id);
+    public function getUserInfor($id)
+    {
+        $user = User::with('quyen')->where('id', $id)->first();
+        $soBaiViet = BaiViet::where('user_id', $id)->count();
+        $user['so_bai_viet'] = $soBaiViet;
         return response($user, 200);
     }
-    
-    
+
+    public function getBaiVietProfile($id)
+    {
+        $baiViet = BaiViet::where('user_id', $id)->get();
+        return response($baiViet, 200);
+    }
+    public function getSanPhamProfile($id)
+    {
+        $sanPham = SanPham::where('user_id', $id)->get();
+        return response($sanPham, 200);
+    }
 }
