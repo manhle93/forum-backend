@@ -6,6 +6,7 @@ use App\BaiViet;
 use Illuminate\Http\Request;
 use App\Http\Resources\BaiVietResource;
 use App\Like;
+use App\ThongBao;
 use Validator;
 
 class BaiVietController extends Controller
@@ -174,6 +175,7 @@ class BaiVietController extends Controller
         $user = auth()->user();
         if ($user && (($user->id == BaiViet::find($id)->user_id) || $user->quyen_id == 2)) {
             BaiViet::find($id)->delete();
+            ThongBao::where('type', 'bai_viet')->where('reference_id', $id)->delete();
             return response(['message' => "Xóa bài viết thành công"], 200);
         } else return response(['message' => "Không thể xóa bài viết"], 400);
     }

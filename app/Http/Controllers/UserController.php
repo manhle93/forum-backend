@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaiViet;
+use App\Events\NotifyEvent;
 use App\Quyen;
 use App\TinNhan;
 use App\User;
@@ -10,12 +11,13 @@ use Illuminate\Http\Request;
 use Validator;
 use App\Events\TinNhanEvent;
 use App\SanPham;
+use App\ThongBao;
 
 class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('JWT', ['except' => ['getBinhLuan', 'getUserInfor', 'getBaiVietProfile', 'getSanPhamProfile']]);
+        $this->middleware('JWT', ['except' => ['getBinhLuan', 'getUserInfor', 'getBaiVietProfile', 'getSanPhamProfile', 'timKiem']]);
     }
 
     public function trangCaNhan()
@@ -94,7 +96,16 @@ class UserController extends Controller
                 'user_nhan_id' => $data['user_nhan_id'],
                 'noi_dung' => $data['noi_dung']
             ]);
+            ThongBao::create([
+                'type' => 'tin_nhan',
+                'reference_id' => $user->id,
+                'user_id_nhan_thong_bao' => $data['user_nhan_id'],
+                'noi_dung' => 'Đã nhắn tin cho bạn',
+                'user_id_tuong_tac' => $user->id
+            ]);
             broadcast(new TinNhanEvent($data['user_nhan_id'], $user->id))->toOthers();
+            broadcast(new NotifyEvent($data['user_nhan_id'], 'thong_bao', $user->name));
+
         } catch (\Exception $e) {
             return response(['message' => 'Lỗi'], 500);
         }
@@ -123,5 +134,14 @@ class UserController extends Controller
     {
         $sanPham = SanPham::where('user_id', $id)->get();
         return response($sanPham, 200);
+    }
+
+    public function timKiem(Request $request)
+    {
+        $search = $request->get('search');
+        $sanPham = SanPham::where('ten_san_pham', 'ilike', "%{$search}%")->orWhere('mo_ta', 'ilike', "%{$search}%")->get();
+        $baiViet = BaiViet::with('user')->where('tieu_de', 'ilike', "%{$search}%")->orWhere('noi_dung', 'ilike', "%{$search}%")->get();
+        $user = User::with('quyen')->where('name', 'ilike', "%{$search}%")->orWhere('email', 'ilike', "%{$search}%")->get();
+        return response(['san_pham' => $sanPham, 'bai_viet' => $baiViet, 'user' => $user], 200);
     }
 }

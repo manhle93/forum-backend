@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\SanPham;
+use App\ThongBao;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -90,6 +91,7 @@ class SanPhamController extends Controller
                 return response(['message' => 'Không có quyền xóa sản phẩm'], 400);
             }else {
                 $sanPham->delete();
+                ThongBao::where('type', 'san_pham')->where('reference_id', $id)->delete();
                 return response(['message' => 'Thành công'], 200);
             }
         }catch(\Exception $e){

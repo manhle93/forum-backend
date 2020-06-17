@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\BaiViet;
 use App\Events\LikeEvent;
 use App\Like;
+use App\ThongBao;
 use Illuminate\Http\Request;
 
 class LikeController extends Controller
@@ -40,6 +42,18 @@ class LikeController extends Controller
                 'type' => $data['type'],
                 'reference_id' => $data['reference_id']
             ]);
+            if ($data['type'] == 'bai_viet') {
+                $baiViet = BaiViet::where('id', $data['reference_id'])->first();
+                if ($baiViet->user_id != $baiViet->user_id) {
+                    ThongBao::create([
+                        'type' => 'bai_viet',
+                        'reference_id' => $data['reference_id'],
+                        'user_id_nhan_thong_bao' => $baiViet->user_id,
+                        'noi_dung' => 'Đã thích bài viết của bạn',
+                        'user_id_tuong_tac' => $user->id
+                    ]);
+                }
+            }
             broadcast(new LikeEvent($data['reference_id'], $data['type']))->toOthers();
             return response(['message' => 'Thành công'], 200);
         } catch (\Exception $e) {

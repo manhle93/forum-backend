@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Validator;
 use App\Events\LikeEvent;
 use App\Events\NotifyEvent;
+use App\ThongBao;
 
 class BinhLuanController extends Controller
 {
@@ -81,19 +82,27 @@ class BinhLuanController extends Controller
             ], 400);
         }
         $baiViet = BaiViet::find($data['bai_viet_id']);
-        if(!$baiViet){
-            return response(['message' => 'Bài viết không tồn tại'],500);
+        if (!$baiViet) {
+            return response(['message' => 'Bài viết không tồn tại'], 500);
         }
         $userBaiViet = User::find($baiViet->user_id);
         try {
-           $binhLuan =  BinhLuan::create([
+            $binhLuan =  BinhLuan::create([
                 'noi_dung' => $data['noi_dung'],
                 'bai_viet_id' => $data['bai_viet_id'],
                 'user_id' => $user->id,
             ]);
-            $userBaiViet->notify(new BinhLuanNotification($binhLuan));
-            broadcast(new LikeEvent($binhLuan->id, 'binh_luan'))->toOthers();
-            broadcast(new NotifyEvent ($userBaiViet->id, 'thong_bao', $user->name));
+            if ($user->id != $baiViet->user_id) {
+                ThongBao::create([
+                    'type' => 'bai_viet',
+                    'reference_id' => $data['bai_viet_id'],
+                    'user_id_nhan_thong_bao' => $baiViet->user_id,
+                    'noi_dung' => 'Đã bình luận về bài viết của bạn',
+                    'user_id_tuong_tac' => $user->id
+                ]);
+                broadcast(new NotifyEvent($userBaiViet->id, 'thong_bao', $user->name)); // thông báo bình luận realtime
+            }
+            broadcast(new LikeEvent($binhLuan->id, 'binh_luan'))->toOthers(); //hiển thị bình luận realtime
             return response(['message' => 'Đăng bình luận thành công'], 200);
         } catch (\Exception $e) {
             return response($data, 500);

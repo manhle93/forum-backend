@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\BinhLuanSanPham;
 use App\Events\NotifyEvent;
 use App\SanPham;
+use App\ThongBao;
 use App\User;
 use Illuminate\Http\Request;
 use Validator;
@@ -29,30 +30,41 @@ class BinhLuanSanPhamController extends Controller
             ], 400);
         }
         $sanPham = SanPham::find($data['san_pham_id']);
-        if(!$sanPham){
-            return response(['message' => 'Sản phẩm không tồn tại'],500);
+        if (!$sanPham) {
+            return response(['message' => 'Sản phẩm không tồn tại'], 500);
         }
         $userSanPham = User::find($sanPham->user_id);
         try {
-           $binhLuan =  BinhLuanSanPham::create([
+            $binhLuan =  BinhLuanSanPham::create([
                 'noi_dung' => $data['noi_dung'],
                 'san_pham_id' => $data['san_pham_id'],
                 'user_id' => $user->id,
             ]);
-            // $userBaiViet->notify(new BinhLuanNotification($binhLuan));
-            // broadcast(new NotifyEvent ($userSanPham->id, 'thong_bao', $user->name));
+            if ($user->id != $sanPham->user_id) {
+                ThongBao::create([
+                    'type' => 'san_pham',
+                    'reference_id' => $data['san_pham_id'],
+                    'user_id_nhan_thong_bao' => $sanPham->user_id,
+                    'noi_dung' => 'Đã bình luận về sản phẩm của bạn',
+                    'user_id_tuong_tac' => $user->id
+                ]);
+                broadcast(new NotifyEvent($userSanPham->id, 'thong_bao', $user->name));
+            }
+
             return response(['message' => 'Đăng bình luận thành công'], 200);
         } catch (\Exception $e) {
             return response($e, 500);
         }
     }
 
-    public function index($id){
+    public function index($id)
+    {
         $binhLuan = BinhLuanSanPham::where('san_pham_id', $id)->with('user')->orderBy('created_at', 'DESC')->get();
         return response($binhLuan, 200);
     }
 
-    public function xoaBinhLuan($id){
+    public function xoaBinhLuan($id)
+    {
         $user = auth()->user();
         $binhLuan = BinhLuanSanPham::find($id);
         if (!$binhLuan) {
@@ -64,5 +76,4 @@ class BinhLuanSanPhamController extends Controller
         $binhLuan->delete();
         return response(['message' => 'Xóa thành công'], 200);
     }
-
 }

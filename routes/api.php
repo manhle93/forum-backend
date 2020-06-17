@@ -75,6 +75,7 @@ Route::put('hoanthanhdonhang/{id}', 'DonHangController@hoanThanhDon');
 Route::get('donmuahang', 'DonHangController@getDonMuaHangCaNhan');
 Route::put('huydonmuahang/{id}', 'DonHangController@huyDonMuaHang');
 
+Route::get('timkiem', 'UserController@timKiem');
 
 
 
